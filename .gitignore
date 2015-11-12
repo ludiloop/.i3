@@ -1,4 +1,5 @@
-*.swp
+*.jpg
+*.png
 .git
 .git/
-*.jpg
+.swp

@@ -94,12 +94,14 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 # move the currently focused window to the scratchpad
-# bindsym $mod+Shift+minus move scratchpad
-#
-# # Show the next scratchpad window or hide the focused scratchpad window.
-# # If there are multiple scratchpad windows, this command cycles through them.
-# bindsym $mod+space scratchpad show
-#
+bindsym $mod+Shift+minus move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+# To move windows from scratchpad , just use floating window command
+bindsym $mod+minus scratchpad show
+
+
 
 # some examples
 # Name the workspaces
@@ -125,11 +127,11 @@ bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 
-# move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace 1
-bindsym $mod+Shift+2 move container to workspace 2
-bindsym $mod+Shift+3 move container to workspace 3
-bindsym $mod+Shift+4 move container to workspace 4
+# move focused container to workspace and switch to that workspace
+bindsym $mod+Shift+1 move container to workspace 1; workspace 1
+bindsym $mod+Shift+2 move container to workspace 2; workspace 2
+bindsym $mod+Shift+3 move container to workspace 3; workspace 3
+bindsym $mod+Shift+4 move container to workspace 4; workspace 4
 bindsym $mod+Shift+5 move container to workspace 5
 bindsym $mod+Shift+6 move container to workspace 6
 bindsym $mod+Shift+7 move container to workspace 7
@@ -137,10 +139,20 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
-# move to monitor
+# dual-monitor config: use Win+Alt
 bindsym $mod+Shift+Left move workspace to output left
 bindsym $mod+Shift+Right move workspace to output right
+bindsym $mod+Mod1+Left move container to output left
+bindsym $mod+Mod1+Right move container to output right
 
+# dual-monitor config: use Win+Alt+{h,j,k,l} to move containers/workspaces
+# from left to right
+# bindsym $mod+$mod2+h move workspace to output left
+# bindsym $mod+$mod2+j move container to output left
+# bindsym $mod+$mod2+k move container to output right
+# bindsym $mod+$mod2+l move workspace to output right
+#
+#
 # no border examples
 # for_window [class="Slack"] border none
 # for_window [class="^Spotify$"] border none
@@ -150,41 +162,42 @@ bindsym $mod+Shift+Right move workspace to output right
 # for_window [class="^Pavucontrol$"] move scratchpad
 for_window [class="VirtualBox"] floating enable
 for_window [class="Vlc"] floating enable
+for_window [class="Krusader"] floating enable
+#for_window [class="Pac"] floating enable
+for_window [class="Wireshark"] floating enable
+#for_window [class="Gedit"] floating enable
+for_window [class="KeePassX"] floating enable
 
 # lock screen
-bindsym Control+$mod+l exec i3lock -c 111111
+bindsym Control+$mod+l exec i3lock -i ~/.i3/background.png
 
 # audio controls
-bindsym XF86AudioRaiseVolume exec amixer set Master 5+ #increase sound volume
-bindsym XF86AudioLowerVolume exec amixer set Master 5- #decrease sound volume
-bindsym XF86AudioMute exec amixer set Master 1+ toggle # mute sound
-bindsym XF86AudioMicMute exec amixer set Capture toggle # mute mic
-#
-# # screen brightness controls
+bindsym XF86AudioRaiseVolume exec "amixer -q -D pulse set Master 5%+ unmute"
+bindsym XF86AudioLowerVolume exec "amixer -q -D pulse set Master 5%- unmute"
+bindsym XF86AudioMute exec "amixer -q -D pulse set Master toggle"
+#bindsym XF86AudioMicMute exec "amixer -q -D pulse set Capture toggle" # mute mic
+
+# screen brightness controls
 # bindsym XF86MonBrightnessUp exec sudo light -A 5 # increase screen brightness
-# bindsym XF86MonBrightnessDown exec sudo light -U 5 # decrease screen
-# brightness
-#
-## multimedia keys
-#bindsym XF86AudioRaiseVolume exec "amixer -D pulse sset Master '3%+'"
-#bindsym XF86AudioLowerVolume exec "amixer -D pulse sset Master '1%-'"
-#bindsym XF86AudioMute exec "amixer -D pulse set Master toggle"
-#bindsym XF86AudioMicMute exec "amixer -D pulse sset Capture toggle"
-#
+# bindsym XF86MonBrightnessDown exec sudo light -U 5 # decrease screen brightness
+
 #bindsym XF86AudioPlay exec "~/.bin/player toggle"
 #bindsym XF86AudioStop exec "~/.bin/player stop"
 #bindsym XF86AudioNext exec "~/.bin/player next"
 #bindsym XF86AudioPrev exec "~/.bin/player previous"
-#
-#bindsym XF86KbdBrightnessDown exec "sudo /opt/kbdlight/bin/kbdlight -"
-#bindsym XF86KbdBrightnessUp exec "sudo /opt/kbdlight/bin/kbdlight +"
-#bindsym XF86TouchpadToggle exec "synclient TouchpadOff=$(synclient | awk
-#'/TouchpadOff/ {print ($3+1)%2}')"
-#
+
+# volume control for pulseaudio server
+bindsym $mod+Shift+a exec "pavucontrol"
+
+# keyboard brightness control from
+# https://rog.asus.com/forum/showthread.php?35889-Linux-Tips-and-Tricks 
+bindsym XF86KbdBrightnessDown exec "~/.i3/leds_down.sh"
+bindsym XF86KbdBrightnessUp exec "~/.i3/leds_up.sh"
+
+# touchpad control
+bindsym XF86TouchpadToggle exec "~/.i3/asus_touchpad.sh"
+
 #bindsym XF86Display exec "arandr"
-#
-#bindsym $mod+a exec "urxvtc -e alsamixer"
-#bindsym $mod+Shift+a exec "pavucontrol"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -192,6 +205,25 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
+#logout,sspend,shutdown
+#https://faq.i3wm.org/question/239/how-do-i-suspendlockscreen-and-logout/
+set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+        bindsym l exec --no-startup-id "~/.i3/i3exit.sh lock", mode "default"
+        bindsym e exec --no-startup-id "~/.i3/i3exit.sh logout", mode "default"
+        bindsym s exec --no-startup-id "~/.i3/i3exit.sh suspend", mode "default"
+        bindsym h exec --no-startup-id "~/.i3/i3exit.sh hibernate", mode "default"
+        bindsym r exec --no-startup-id "~/.i3/i3exit.sh reboot", mode "default"
+        bindsym Shift+s exec --no-startup-id "~/.i3/i3exit.sh shutdown", mode "default"
+
+    # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+bindsym $mod+Pause mode "$mode_system"
+
+
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -235,8 +267,8 @@ bar {
             urgent_workspace    #aa0000  #990000     #ffffff
         }
         position top
-        output eDP1
-        #tray_output none
+        #output eDP1
+        tray_output eDP1
         status_command i3status --config ~/.i3/i3status.conf
 }
 
@@ -247,3 +279,11 @@ exec --no-startup-id feh --bg-fill /home/milan/.i3/background.jpg
 # startup programs examples
 # #exec --no-starup-id i3-msg 'workspace "1: irssi"; exec rxvt-unicode;'
 # #exec --no-startup-id i3msg 'workspace 3; exec rxvt-unicode;'
+
+# startup program 
+exec --no-startup-id nm-applet
+# startup applications: settings etc.
+# exec --no-startup-id gnome-keyring-daemon
+# exec --no-startup-id ibus-daemon
+# exec --no-startup-id dropbox start -i
+# exec --no-startup-id gnome-settings-daemon
