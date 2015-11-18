@@ -280,8 +280,12 @@ exec --no-startup-id feh --bg-fill /home/milan/.i3/background.jpg
 # #exec --no-starup-id i3-msg 'workspace "1: irssi"; exec rxvt-unicode;'
 # #exec --no-startup-id i3msg 'workspace 3; exec rxvt-unicode;'
 
-# startup program 
+## startup program 
 exec --no-startup-id nm-applet
+# adding crotian keyboard layout (need it sometime), and switching it between
+# us with alt+shift
+exec --no-startup-id 'setxkbmap -model pc105 -layout us,hr -option grp:alt_shift_toggle'
+
 # startup applications: settings etc.
 # exec --no-startup-id gnome-keyring-daemon
 # exec --no-startup-id ibus-daemon
